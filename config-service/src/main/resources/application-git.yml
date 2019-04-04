@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/LennyLzy/myconfig/
+          search-paths: yml
+          username:
+          passphrase:
+          default-label: master

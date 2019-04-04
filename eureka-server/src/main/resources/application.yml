@@ -1,0 +1,61 @@
+server:
+  port: 18080
+spring:
+  application:
+    name: eureka-server
+#  security:
+#    user:
+#      name: admin
+#      password: admin
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    #注册中心服务器自身无需注册
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    # 测试时关闭自我保护机制，保证不可用服务及时踢出
+    # 生产环境需打开,当服务不可用时（如短暂的网络故障导致无法连上）,服务会保留一段时间再踢出
+    enable-self-preservation: false
+
+# 高可用注册中心配置
+# 通过节点间相互注册，互相注册的节点成为对等节点，通过冗余实现高可用
+# -------------peer1----------------------------
+# server:
+#  port: 18081
+# spring:
+#  application:
+#    name: Eureka-Server-peer1
+#
+# eureka:
+#  instance:
+#    hostname: localhost
+#  client:
+#    service-url:
+#      defaultZone: http://${eureka.instance.hostname}:18082/eureka/
+#  server:
+#    # 测试时关闭自我保护机制，保证不可用服务及时踢出
+#    enable-self-preservation: false
+#------------------------------------------------
+# -------------peer2----------------------------
+# server:
+#  port: 18082
+# spring:
+#  application:
+#    name: Eureka-Server-peer2
+#
+# eureka:
+#  instance:
+#    hostname: localhost
+#  client:
+#    service-url:
+#      defaultZone: http://${eureka.instance.hostname}:18081/eureka/
+#  server:
+#    # 测试时关闭自我保护机制，保证不可用服务及时踢出
+#    enable-self-preservation: false
+#------------------------------------------------
+

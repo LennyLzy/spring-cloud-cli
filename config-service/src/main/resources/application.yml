@@ -1,0 +1,26 @@
+server:
+  port: 18090
+spring:
+  application:
+    name: config-service
+  profiles:
+    active: git
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "/actuator/bus-refresh"
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "*"
+#通过消息总线广播配置更新，让各个服务重新拉取配置信息，而无需逐个服务重启
+#通过 /actuator/bus-refresh 发送更新配置请求， 在需要更改配置的类上添加@RefreshScope，即可更新配置，也可和@SpringBootApplication一起放在根启动类上
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:123456@localhost:18080/eureka/

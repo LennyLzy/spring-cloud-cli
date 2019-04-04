@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    config:
+      fail-fast: true
+      ##      Eureka
+      discovery:
+        enable: true
+        serviceId: config-server
+eureka:
+  client:
+    serviceUrl:
+      defaultZone:
+##     非Eureka
+#      uri: http://localhost:8769
+
