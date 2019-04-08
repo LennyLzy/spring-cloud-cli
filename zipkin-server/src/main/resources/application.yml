@@ -1,22 +1,20 @@
-eureka:
-  client:
-    service-url:
-      defaultZone: http://admin:123456@localhost:18080/eureka/
 server:
-  port: 19411
+  port: 9411
 spring:
   application:
     name: zipkin-server
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://admin:123456@localhost:18080/eureka/ #注册服务器地址
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
   metrics:
     web:
       server:

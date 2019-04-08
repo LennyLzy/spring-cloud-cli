@@ -12,11 +12,5 @@
         <module name="zipkin-server" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="config-service" target="1.8" />
-      <module name="eureka-server" target="1.8" />
-      <module name="spring-cloud-cli" target="1.8" />
-      <module name="zipkin-server" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

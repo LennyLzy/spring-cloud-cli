@@ -22,6 +22,7 @@
 	<modules>
 		<module>eureka-server</module>
 		<module>config-service</module>
+		<module>zipkin-server</module>
 	</modules>
 
 	<dependencies>
