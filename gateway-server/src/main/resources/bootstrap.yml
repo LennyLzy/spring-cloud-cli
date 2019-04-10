@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: gateway-server
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
+#  security:
+#      user:
+#        name: admin
+#        password: admin
+  cloud:
+    config:
+      fail-fast: true
+      discovery:
+        service-id: config-service
+        enabled: true
+  profiles:
+    active: dev
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:123456@localhost:18080/eureka/
+server:
+  port: 18070
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "*"
