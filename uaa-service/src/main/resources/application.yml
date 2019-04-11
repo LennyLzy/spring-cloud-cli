@@ -1,0 +1,11 @@
+server:
+  port: 18050
+spring:
+  application:
+    name: uaa-service
+  profiles:
+    active: dev
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:123456@localhost:18080/eureka/

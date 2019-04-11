@@ -1,0 +1,11 @@
+##设置断路由的超时时间，毫秒
+#hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds: 3000
+## 配置gateway路由
+#spring:
+#  cloud:
+#    gateway:
+#      default-filters:
+#      - name: Hystrix
+#        args:
+#          name: fallbackcmd
+#          fallbackUri: forward:/fallback
