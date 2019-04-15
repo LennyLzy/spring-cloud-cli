@@ -24,10 +24,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-cache</artifactId>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-cache</artifactId>-->
+		<!--</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
@@ -48,9 +48,43 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-oauth2</artifactId>
 		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.cloud</groupId>-->
+			<!--<artifactId>spring-cloud-starter-openfeign</artifactId>-->
+		<!--</dependency>-->
+
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid-spring-boot-starter</artifactId>
+			<version>1.1.10</version>
+		</dependency>
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-boot-starter</artifactId>
+			<version>3.0.7.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-generator</artifactId>
+			<version>3.0.7.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-engine-core</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.54</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
 		</dependency>
 
 		<dependency>
