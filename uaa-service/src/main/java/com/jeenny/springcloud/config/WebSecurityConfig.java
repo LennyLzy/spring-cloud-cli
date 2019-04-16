@@ -1,5 +1,7 @@
 package com.jeenny.springcloud.config;
 
+import com.jeenny.springcloud.serviceimpl.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
                 .and()
                 .authorizeRequests().antMatchers(
-                        "/","/user/register","/user/login","/oauth/authorize","/oauth/confirm_access")
+                        "/","/user/register","/user/login","/oauth/authorize","/oauth/confirm_access","/oauth/token")
                 .permitAll()
                 .and()
                 .formLogin().permitAll()
@@ -45,9 +47,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic();
     }
 
+    @Autowired
+    UserServiceImpl userService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(new BCryptPasswordEncoder());
     }
 }

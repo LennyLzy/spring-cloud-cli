@@ -6,20 +6,23 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="common" />
         <module name="config-service" />
         <module name="eureka-server" />
         <module name="gateway-server" />
-        <module name="spring-cloud-cli" />
         <module name="uaa-service" />
+        <module name="user-service" />
         <module name="zipkin-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="common" target="1.8" />
       <module name="config-service" target="1.8" />
       <module name="eureka-server" target="1.8" />
       <module name="gateway-server" target="1.8" />
       <module name="spring-cloud-cli" target="1.8" />
       <module name="uaa-service" target="1.8" />
+      <module name="user-service" target="1.8" />
       <module name="zipkin-server" target="1.8" />
     </bytecodeTargetLevel>
   </component>
