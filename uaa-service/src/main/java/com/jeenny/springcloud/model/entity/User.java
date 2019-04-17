@@ -1,6 +1,8 @@
 package com.jeenny.springcloud.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Collection;
@@ -27,7 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements Serializable,UserDetails {
 
     private static final long serialVersionUID = 1L;
-
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     private String nickname;
@@ -35,34 +37,27 @@ public class User implements Serializable,UserDetails {
     private String avatar;
 
     @TableField(exist = false)
-    private List<UserAuth> auths;
+    private String username;
+
+    @TableField(exist = false)
+    private String password;
 
     @TableField(exist = false)
     private List<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.roles;
     }
 
     @Override
     public String getPassword() {
-        for(UserAuth auth:auths){
-            if("username".equals(auth.getAuthType())){
-                return auth.getCredential();
-            }
-        }
-        return null;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        for(UserAuth auth:auths){
-            if("username".equals(auth.getAuthType())){
-                return auth.getIdentifier();
-            }
-        }
-        return null;
+        return this.username;
     }
 
     @Override

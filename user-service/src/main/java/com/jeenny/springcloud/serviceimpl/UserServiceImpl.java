@@ -30,31 +30,33 @@ import java.util.UUID;
  * @since 2019-04-15
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService,UserDetailsService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Autowired
     UserAuthServiceImpl authService;
     @Autowired
     UaaServiceClient uaaServiceClient;
 
-    @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        QueryWrapper<UserAuth> authQuery = new QueryWrapper<>();
-        authQuery.eq("identifier",s);
-        UserAuth userAuth = authService.getOne(authQuery);
-        if(userAuth != null){
-//            List<UserAuth> authList = authService.list(new QueryWrapper<UserAuth>()
-//                    .eq("user_id",userAuth.getUserId()));
-            User user = this.getById(userAuth.getUserId());
-//            user.setAuths(authList);
-            return user;
-        }
-        return null;
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+//        QueryWrapper<UserAuth> authQuery = new QueryWrapper<>();
+//        authQuery.eq("identifier",s);
+//        UserAuth userAuth = authService.getOne(authQuery);
+//        if(userAuth != null){
+////            List<UserAuth> authList = authService.list(new QueryWrapper<UserAuth>()
+////                    .eq("user_id",userAuth.getUserId()));
+//            User user = this.getById(userAuth.getUserId());
+////            user.setAuths(authList);
+//            return user;
+//        }
+//        return null;
+//    }
 
     @Override
     @Transactional
     public UserLoginDTO login(String identifier, String credential) throws Exception {
+        System.out.println(identifier);
+        System.out.println(credential);
         QueryWrapper<UserAuth> authQuery = new QueryWrapper<>();
         authQuery.eq("identifier",identifier);
         UserAuth userAuth = authService.getOne(authQuery);
@@ -63,10 +65,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         if("account".equals(userAuth.getAuthType())){
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            if(passwordEncoder.matches(credential,userAuth.getCredential()))
+            if(!passwordEncoder.matches(credential,userAuth.getCredential()))
                 throw new Exception("password error");
             JWT jwt = uaaServiceClient.getToken("Basic dXNlci1zZXJ2aWNlOjEyMzQ1Ng==",
-                    "password",userAuth.getIdentifier(),userAuth.getCredential());
+                    "password",userAuth.getIdentifier(),credential);
             if(jwt == null)
                 throw new Exception("Feign request error: uaa-service");
             User user = this.getById(userAuth.getUserId());
@@ -79,6 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional
     public boolean register(String identifier, String credential, String authType) {
         List<UserAuth> authList = authService.list(
                 new QueryWrapper<UserAuth>()
@@ -89,14 +92,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return false;
         else{
             User user = new User();
-            user.setNickname(String.valueOf(System.currentTimeMillis()));
+            user.setNickname("管理员");
+            user.setAvatar("");
             this.save(user);
             System.out.println(user.getId());
             UserAuth userAuth = new UserAuth();
             userAuth.setAuthType(authType);
             userAuth.setIdentifier(identifier);
-            userAuth.setCredential(credential);
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            userAuth.setCredential(passwordEncoder.encode(credential));
             userAuth.setUserId(user.getId());
+            authService.save(userAuth);
             return true;
         }
     }

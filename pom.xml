@@ -25,6 +25,7 @@
 		<module>config-service</module>
 		<module>zipkin-server</module>
 		<module>gateway-server</module>
+		<module>uaa-service</module>
 		<module>user-service</module>
         <module>common</module>
     </modules>

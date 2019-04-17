@@ -34,10 +34,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         authQuery.eq("identifier",s);
         UserAuth userAuth = authService.getOne(authQuery);
         if(userAuth != null){
-//            List<UserAuth> authList = authService.list(new QueryWrapper<UserAuth>()
-//                    .eq("user_id",userAuth.getUserId()));
             User user = this.getById(userAuth.getUserId());
-//            user.setAuths(authList);
+            user.setUsername(s);
+            user.setPassword(userAuth.getCredential());
             return user;
         }
         return null;

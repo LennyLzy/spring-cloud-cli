@@ -14,4 +14,11 @@
         id, role_name, description
     </sql>
 
+    <select id="selectRoleByUid" resultMap="BaseResultMap">
+        SELECT
+        r.id, role_name, description
+        FROM role r LEFT JOIN user_role ur ON r.id = ur.role_id
+        WHERE
+        ur.user_id = #{uid}
+    </select>
 </mapper>

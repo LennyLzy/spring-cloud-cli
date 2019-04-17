@@ -3,6 +3,7 @@ package com.jeenny.springcloud.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jeenny.springcloud.model.entity.UserRole;
 
+
 /**
  * <p>
  *  Mapper 接口

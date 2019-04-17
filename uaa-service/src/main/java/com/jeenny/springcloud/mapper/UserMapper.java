@@ -2,6 +2,9 @@ package com.jeenny.springcloud.mapper;
 
 import com.jeenny.springcloud.model.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -12,5 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2019-04-15
  */
 public interface UserMapper extends BaseMapper<User> {
-
+    User selectById(@Param("var1") Serializable var1);
 }

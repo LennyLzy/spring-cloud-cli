@@ -7,6 +7,9 @@
         <id column="id" property="id" />
         <result column="nickname" property="nickname" />
         <result column="avatar" property="avatar" />
+        <collection property="roles" column="id" ofType="com.jeenny.springcloud.model.entity.Role"
+                    select="com.jeenny.springcloud.mapper.RoleMapper.selectRoleByUid" fetchType="eager">
+        </collection>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -14,4 +17,12 @@
         id, nickname, avatar
     </sql>
 
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT
+          <include refid="Base_Column_List"/>
+        FROM
+          user
+        WHERE
+          id = #{var1}
+    </select>
 </mapper>

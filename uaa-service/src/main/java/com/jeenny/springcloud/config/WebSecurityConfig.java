@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
                 .and()
                 .authorizeRequests().antMatchers(
-                        "/","/user/register","/user/login","/oauth/authorize","/oauth/confirm_access","/oauth/token")
+                        "/","/user/register","/user/login","/oauth/authorize","/oauth/confirm_access")
                 .permitAll()
                 .and()
                 .formLogin().permitAll()
@@ -49,9 +49,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     UserServiceImpl userService;
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 }
