@@ -8,11 +8,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import response.Result;
-import response.ResultUtil;
+import com.jeenny.springcloud.response.Result;
+import com.jeenny.springcloud.response.ResultUtil;
 
 @SpringBootApplication
 @EnableFeignClients
@@ -29,10 +30,14 @@ public class UserServiceApplication {
 	RoleServiceImpl roleService;
 	@Autowired
 	UserServiceImpl userService;
+	@Autowired
+	RedisTemplate redisTemplate;
 
 	@GetMapping("/test")
 	public Result test(){
-		return ResultUtil.success(userService.getById(1L));
+		redisTemplate.opsForValue().set("test",123);
+		return ResultUtil.success(redisTemplate.opsForValue().get("test"));
+//		return ResultUtil.success(userService.getById(1L));
 	}
 
 	@GetMapping("/foo")

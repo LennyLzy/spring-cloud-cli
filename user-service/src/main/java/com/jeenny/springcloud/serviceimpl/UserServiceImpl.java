@@ -8,18 +8,17 @@ import com.jeenny.springcloud.model.entity.User;
 import com.jeenny.springcloud.model.entity.UserAuth;
 import com.jeenny.springcloud.service.UaaServiceClient;
 import com.jeenny.springcloud.service.UserService;
-import dto.JWT;
+import com.jeenny.springcloud.dto.JWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import response.Result;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * <p>
@@ -30,33 +29,28 @@ import java.util.UUID;
  * @since 2019-04-15
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService, UserDetailsService {
 
     @Autowired
     UserAuthServiceImpl authService;
     @Autowired
     UaaServiceClient uaaServiceClient;
 
-//    @Override
-//    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-//        QueryWrapper<UserAuth> authQuery = new QueryWrapper<>();
-//        authQuery.eq("identifier",s);
-//        UserAuth userAuth = authService.getOne(authQuery);
-//        if(userAuth != null){
-////            List<UserAuth> authList = authService.list(new QueryWrapper<UserAuth>()
-////                    .eq("user_id",userAuth.getUserId()));
-//            User user = this.getById(userAuth.getUserId());
-////            user.setAuths(authList);
-//            return user;
-//        }
-//        return null;
-//    }
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        QueryWrapper<UserAuth> authQuery = new QueryWrapper<>();
+        authQuery.eq("identifier",s);
+        UserAuth userAuth = authService.getOne(authQuery);
+        if(userAuth != null){
+            User user = this.getById(userAuth.getUserId());
+            return user;
+        }
+        return null;
+    }
 
     @Override
     @Transactional
     public UserLoginDTO login(String identifier, String credential) throws Exception {
-        System.out.println(identifier);
-        System.out.println(credential);
         QueryWrapper<UserAuth> authQuery = new QueryWrapper<>();
         authQuery.eq("identifier",identifier);
         UserAuth userAuth = authService.getOne(authQuery);

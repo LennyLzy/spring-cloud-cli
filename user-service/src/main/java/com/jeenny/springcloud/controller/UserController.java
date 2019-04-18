@@ -2,17 +2,18 @@ package com.jeenny.springcloud.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jeenny.springcloud.model.dto.UserLoginDTO;
+import com.jeenny.springcloud.model.entity.User;
 import com.jeenny.springcloud.service.UserService;
+import com.jeenny.springcloud.serviceimpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import response.Result;
-import response.ResultUtil;
+import org.springframework.web.bind.annotation.*;
+import com.jeenny.springcloud.response.Result;
+import com.jeenny.springcloud.response.ResultUtil;
 
 /**
  * <p>
@@ -26,7 +27,7 @@ import response.ResultUtil;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    UserService userService;
+    private UserServiceImpl userService;
     @PostMapping("/register")
     @ResponseBody
     public Result register(@RequestBody JSONObject reqData){
@@ -53,6 +54,16 @@ public class UserController {
             UserLoginDTO userLoginDTO = userService.login(identifier,credential);
             return ResultUtil.success(userLoginDTO);
         }
+    }
+
+    @PostMapping("/user/info/{id}")
+    public Result getUserById(@PathVariable("id")String id){
+        return ResultUtil.success(userService.getById(Long.valueOf(id)));
+    }
+
+    @PostMapping("/user/load")
+    UserDetails loadUserByUsername(@RequestParam("username")String username){
+        return userService.loadUserByUsername(username);
     }
 }
 

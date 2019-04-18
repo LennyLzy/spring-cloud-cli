@@ -1,7 +1,7 @@
 package com.jeenny.springcloud.servicefallback;
 
 import com.jeenny.springcloud.service.UaaServiceClient;
-import dto.JWT;
+import com.jeenny.springcloud.dto.JWT;
 import org.springframework.stereotype.Component;
 
 /**

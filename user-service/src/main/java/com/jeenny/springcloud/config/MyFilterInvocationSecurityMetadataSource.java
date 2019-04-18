@@ -5,9 +5,7 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.util.AntPathMatcher;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Administrator on 2019/4/17.
@@ -16,26 +14,25 @@ public class MyFilterInvocationSecurityMetadataSource implements org.springframe
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    private final Map<String,String> urlRoleMap = new HashMap<String,String>(){{
-        put("/open/**","ROLE_ANONYMOUS");
-        put("/health","ROLE_ANONYMOUS");
-        put("/restart","ROLE_ADMIN");
-        put("/demo","ROLE_USER");
-    }};
+    private static final Map<String,String> urlRoleMap = new LinkedHashMap <>();
+
+    static {
+        urlRoleMap.put("/test","ROLE_ANONYMOUS");
+        urlRoleMap.put("/user/**","authenticated");
+    }
 
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
         FilterInvocation fi = (FilterInvocation) object;
         String url = fi.getRequestUrl();
 //        String httpMethod = fi.getRequest().getMethod();
+        List<ConfigAttribute> attributes = new ArrayList<ConfigAttribute>();
         for(Map.Entry<String,String> entry:urlRoleMap.entrySet()){
             if(antPathMatcher.match(entry.getKey(),url)){
                 return SecurityConfig.createList(entry.getValue());
             }
         }
-        //没有匹配到,默认是要登录才能访问
         return SecurityConfig.createList("ROLE_USER");
-//        return null;
     }
 
     @Override

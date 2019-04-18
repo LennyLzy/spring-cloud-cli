@@ -3,7 +3,6 @@ package com.jeenny.springcloud.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jeenny.springcloud.model.dto.UserLoginDTO;
 import com.jeenny.springcloud.model.entity.User;
-import response.Result;
 
 /**
  * <p>

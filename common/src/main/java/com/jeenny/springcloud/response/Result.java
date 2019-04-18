@@ -1,4 +1,4 @@
-package response;
+package com.jeenny.springcloud.response;
 
 /**
  *

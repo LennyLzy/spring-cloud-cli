@@ -29,10 +29,17 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception{
         clients.inMemory()
                 .withClient("user-service")
-                .secret(passwordEncoder.encode("123456"))
-                .scopes("service")
-                .authorizedGrantTypes("refresh_token","password")
-                .accessTokenValiditySeconds(3600);
+                    .secret(passwordEncoder.encode("123456"))
+                    .scopes("service")
+                    .authorizedGrantTypes("refresh_token","password")
+                    .accessTokenValiditySeconds(3600)
+                    .refreshTokenValiditySeconds(3600*24*7)
+                .and()
+                .withClient("uaa-service")
+                    .secret(passwordEncoder.encode("123456"))
+                    .scopes("service")
+                    .authorizedGrantTypes("client_credentials","refresh_token","password")
+                    .accessTokenValiditySeconds(3600) ;
     }
 
     @Override

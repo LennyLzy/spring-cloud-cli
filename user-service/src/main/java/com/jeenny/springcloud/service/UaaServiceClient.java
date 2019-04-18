@@ -1,7 +1,7 @@
 package com.jeenny.springcloud.service;
 
 import com.jeenny.springcloud.servicefallback.UaaServiceHystrix;
-import dto.JWT;
+import com.jeenny.springcloud.dto.JWT;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
