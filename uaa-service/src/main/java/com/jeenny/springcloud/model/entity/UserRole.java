@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
 
@@ -21,20 +20,16 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("role")
-public class Role implements Serializable, GrantedAuthority {
+@TableName("user_role")
+public class UserRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    private String roleName;
+    private Long userId;
 
-    private String description;
+    private Long roleId;
 
 
-    @Override
-    public String getAuthority() {
-        return this.roleName;
-    }
 }

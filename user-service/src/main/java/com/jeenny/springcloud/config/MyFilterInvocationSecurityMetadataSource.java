@@ -18,7 +18,7 @@ public class MyFilterInvocationSecurityMetadataSource implements org.springframe
 
     static {
         urlRoleMap.put("/test","ROLE_ANONYMOUS");
-        urlRoleMap.put("/user/**","authenticated");
+        urlRoleMap.put("/user/**","ROLE_ANONYMOUS");
     }
 
     @Override

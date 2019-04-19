@@ -14,7 +14,7 @@ public class Result<T> {
     private String msg;
 
     //具体的内容
-    private T body;
+    private T content;
 
     public Result() {
     }
@@ -36,12 +36,12 @@ public class Result<T> {
         this.msg = msg;
     }
 
-    public T getBody() {
-        return body;
+    public T getContent() {
+        return content;
     }
 
-    public void setBody(T data) {
-        this.body = data;
+    public void setContent(T data) {
+        this.content = data;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class Result<T> {
         return "Result{" +
                 "code=" + code +
                 ", msg='" + msg + '\'' +
-                ", body=" + body +
+                ", body=" + content +
                 '}';
     }
 }

@@ -56,14 +56,15 @@ public class UserController {
         }
     }
 
-    @PostMapping("/user/info/{id}")
+    @PostMapping("/info/{id}")
     public Result getUserById(@PathVariable("id")String id){
         return ResultUtil.success(userService.getById(Long.valueOf(id)));
     }
 
-    @PostMapping("/user/load")
-    UserDetails loadUserByUsername(@RequestParam("username")String username){
-        return userService.loadUserByUsername(username);
+    @PostMapping("/load")
+    @ResponseBody
+    public Result loadUserByUsername(@RequestParam("username")String username){
+        return ResultUtil.success(userService.loadUserByUsername(username));
     }
 }
 

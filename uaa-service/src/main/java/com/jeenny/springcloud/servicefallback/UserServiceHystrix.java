@@ -1,5 +1,6 @@
 package com.jeenny.springcloud.servicefallback;
 
+import com.jeenny.springcloud.model.entity.User;
 import com.jeenny.springcloud.response.Result;
 import com.jeenny.springcloud.service.UserServiceClient;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class UserServiceHystrix implements UserServiceClient {
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public Result loadUserByUsername(String username) {
         return null;
     }
 }

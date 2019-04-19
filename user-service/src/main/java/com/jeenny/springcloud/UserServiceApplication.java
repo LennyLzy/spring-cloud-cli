@@ -1,5 +1,6 @@
 package com.jeenny.springcloud;
 
+import com.jeenny.springcloud.model.entity.User;
 import com.jeenny.springcloud.serviceimpl.RoleServiceImpl;
 import com.jeenny.springcloud.serviceimpl.UserServiceImpl;
 import org.mybatis.spring.annotation.MapperScan;
@@ -35,8 +36,9 @@ public class UserServiceApplication {
 
 	@GetMapping("/test")
 	public Result test(){
-		redisTemplate.opsForValue().set("test",123);
-		return ResultUtil.success(redisTemplate.opsForValue().get("test"));
+		User user = userService.getById(1);
+		redisTemplate.opsForValue().set("user",user);
+		return ResultUtil.success(redisTemplate.opsForValue().get("user"));
 //		return ResultUtil.success(userService.getById(1L));
 	}
 

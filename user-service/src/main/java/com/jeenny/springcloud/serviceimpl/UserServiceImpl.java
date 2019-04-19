@@ -6,9 +6,11 @@ import com.jeenny.springcloud.mapper.UserMapper;
 import com.jeenny.springcloud.model.dto.UserLoginDTO;
 import com.jeenny.springcloud.model.entity.User;
 import com.jeenny.springcloud.model.entity.UserAuth;
+import com.jeenny.springcloud.response.exception.CustomException;
 import com.jeenny.springcloud.service.UaaServiceClient;
 import com.jeenny.springcloud.service.UserService;
 import com.jeenny.springcloud.dto.JWT;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,12 +39,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     UaaServiceClient uaaServiceClient;
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public User loadUserByUsername(String s) throws UsernameNotFoundException {
         QueryWrapper<UserAuth> authQuery = new QueryWrapper<>();
         authQuery.eq("identifier",s);
         UserAuth userAuth = authService.getOne(authQuery);
         if(userAuth != null){
             User user = this.getById(userAuth.getUserId());
+            user.setUsername(userAuth.getIdentifier());
+            user.setPassword(userAuth.getCredential());
             return user;
         }
         return null;
@@ -55,16 +59,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         authQuery.eq("identifier",identifier);
         UserAuth userAuth = authService.getOne(authQuery);
         if(null == userAuth){
-            throw new Exception("user not found");
+            throw new UsernameNotFoundException("user not found");
         }
         if("account".equals(userAuth.getAuthType())){
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             if(!passwordEncoder.matches(credential,userAuth.getCredential()))
-                throw new Exception("password error");
+                throw new UsernameNotFoundException("password error");
             JWT jwt = uaaServiceClient.getToken("Basic dXNlci1zZXJ2aWNlOjEyMzQ1Ng==",
                     "password",userAuth.getIdentifier(),credential);
+//            JWT jwt = uaaServiceClient.getToken("Basic dWFhLXNlcnZpY2U6MTIzNDU2",
+//                    "password",userAuth.getIdentifier(),credential);
             if(jwt == null)
-                throw new Exception("Feign request error: uaa-service");
+                throw new CustomException(-1,"Feign Error");
             User user = this.getById(userAuth.getUserId());
             UserLoginDTO userLoginDTO = new UserLoginDTO();
             userLoginDTO.setUser(user);

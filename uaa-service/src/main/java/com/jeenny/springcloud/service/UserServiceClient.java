@@ -1,8 +1,10 @@
 package com.jeenny.springcloud.service;
 
+import com.jeenny.springcloud.model.entity.User;
 import com.jeenny.springcloud.response.Result;
 import com.jeenny.springcloud.response.ResultUtil;
 import com.jeenny.springcloud.servicefallback.UserServiceHystrix;
+import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -14,5 +16,5 @@ import org.springframework.web.bind.annotation.*;
 public interface UserServiceClient {
     @PostMapping("/user/load")
     @ResponseBody
-    UserDetails loadUserByUsername(@RequestParam("username")String username);
+    Result loadUserByUsername(@RequestParam("username")String username);
 }

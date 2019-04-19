@@ -8,3 +8,8 @@ mybatis-plus:
   configuration:
       log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
       cache-enabled: true
+feign:
+  hystrix:
+    enabled: false
+  httpclient:
+    connection-timeout: 5000

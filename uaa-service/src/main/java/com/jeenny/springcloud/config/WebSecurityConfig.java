@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
                 .and()
                 .authorizeRequests().antMatchers(
-                        "/","/user/register","/user/login","/oauth/authorize","/oauth/confirm_access")
+                        "/oauth/authorize","/oauth/confirm_access")
                 .permitAll()
                 .and()
                 .formLogin().permitAll()

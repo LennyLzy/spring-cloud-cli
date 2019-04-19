@@ -16,7 +16,7 @@ public class ResultUtil {
         Result result = new Result();
         result.setCode(ResultEnum.SUCCESS.getCode());
         result.setMsg(ResultEnum.SUCCESS.getMsg());
-        result.setBody(object);
+        result.setContent(object);
         return result;
     }
 
