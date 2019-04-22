@@ -28,18 +28,18 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception{
         clients.inMemory()
-                .withClient("user-service")
+                    .withClient("feign")
                     .secret(passwordEncoder.encode("123456"))
-                    .scopes("service")
-                    .authorizedGrantTypes("refresh_token","password")
-                    .accessTokenValiditySeconds(3600)
-                    .refreshTokenValiditySeconds(3600*24*7)
+                    .scopes("feign")
+                    .authorizedGrantTypes("Implicit","client_credentials")
+                    .accessTokenValiditySeconds(60 * 15)
                 .and()
-                .withClient("uaa-service")
+                    .withClient("app")
                     .secret(passwordEncoder.encode("123456"))
-                    .scopes("service")
-                    .authorizedGrantTypes("client_credentials","refresh_token","password")
-                    .accessTokenValiditySeconds(3600) ;
+                    .scopes("app")
+                    .authorizedGrantTypes("authorization_code","refresh_token","password")
+                    .accessTokenValiditySeconds(3600)
+                    .refreshTokenValiditySeconds(3600 * 24 * 7);
     }
 
     @Override
@@ -71,4 +71,5 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
         converter.setSigningKey("123456");  //对称加密
         return converter;
     }
+
 }

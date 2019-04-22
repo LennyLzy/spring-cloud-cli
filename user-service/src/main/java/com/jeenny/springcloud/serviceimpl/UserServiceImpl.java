@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 
 import java.util.List;
 
@@ -65,10 +66,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             if(!passwordEncoder.matches(credential,userAuth.getCredential()))
                 throw new UsernameNotFoundException("password error");
-            JWT jwt = uaaServiceClient.getToken("Basic dXNlci1zZXJ2aWNlOjEyMzQ1Ng==",
+            JWT jwt = uaaServiceClient.getToken(
+                    "Basic "+ Base64Utils.encodeToString("app:123456".getBytes()),
                     "password",userAuth.getIdentifier(),credential);
-//            JWT jwt = uaaServiceClient.getToken("Basic dWFhLXNlcnZpY2U6MTIzNDU2",
-//                    "password",userAuth.getIdentifier(),credential);
             if(jwt == null)
                 throw new CustomException(-1,"Feign Error");
             User user = this.getById(userAuth.getUserId());

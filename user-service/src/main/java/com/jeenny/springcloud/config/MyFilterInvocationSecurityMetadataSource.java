@@ -17,8 +17,8 @@ public class MyFilterInvocationSecurityMetadataSource implements org.springframe
     private static final Map<String,String> urlRoleMap = new LinkedHashMap <>();
 
     static {
-        urlRoleMap.put("/test","ROLE_ANONYMOUS");
-        urlRoleMap.put("/user/**","ROLE_ANONYMOUS");
+        urlRoleMap.put("/test","PERMITAll");
+        urlRoleMap.put("/user/**","PERMITAll");
     }
 
     @Override

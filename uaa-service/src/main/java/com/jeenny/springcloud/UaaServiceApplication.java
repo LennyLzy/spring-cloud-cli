@@ -1,5 +1,6 @@
 package com.jeenny.springcloud;
 
+import com.jeenny.springcloud.annotation.EnableFeignOAuth2Client;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @MapperScan("com.jeenny.springcloud.mapper")
 @RestController
 @EnableFeignClients
+//@EnableFeignOAuth2Client
 public class UaaServiceApplication {
 
 	public static void main(String[] args) {

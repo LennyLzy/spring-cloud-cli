@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UaaServiceHystrix implements UaaServiceClient {
     @Override
-    public JWT getToken(String authorization, String type, String username, String password) {
+    public JWT getToken(String aauthorization, String type, String username, String password) {
         return null;
     }
 }

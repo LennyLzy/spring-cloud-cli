@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService{
-    private static String USER_SERVICE_KEY = "user-service:123456";
+
     @Autowired
     UserServiceClient userServiceClient;
     @Override

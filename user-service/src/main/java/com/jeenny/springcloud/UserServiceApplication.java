@@ -1,5 +1,6 @@
 package com.jeenny.springcloud;
 
+import com.jeenny.springcloud.annotation.EnableFeignOAuth2Client;
 import com.jeenny.springcloud.model.entity.User;
 import com.jeenny.springcloud.serviceimpl.RoleServiceImpl;
 import com.jeenny.springcloud.serviceimpl.UserServiceImpl;
@@ -21,6 +22,7 @@ import com.jeenny.springcloud.response.ResultUtil;
 @EnableEurekaClient
 @MapperScan("com.jeenny.springcloud.mapper")
 @RestController
+//@EnableFeignOAuth2Client
 public class UserServiceApplication {
 
 	public static void main(String[] args) {
