@@ -8,6 +8,8 @@ import com.jeenny.springcloud.model.entity.User;
 import com.jeenny.springcloud.service.UserService;
 import com.jeenny.springcloud.serviceimpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;

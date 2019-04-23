@@ -46,7 +46,6 @@ public class UserServiceApplication {
 
 	@GetMapping("/foo")
 //	@PreAuthorize("hasAuthority('超级管理员')")
-	@PreAuthorize("has")
 	public Result foo(){
 		return ResultUtil.success();
 	}

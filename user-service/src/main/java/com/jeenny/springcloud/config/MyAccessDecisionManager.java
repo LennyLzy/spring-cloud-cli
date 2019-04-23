@@ -24,9 +24,12 @@ public class MyAccessDecisionManager implements AccessDecisionManager {
             authSet.add(ga.getAuthority());
         }
         Iterator<ConfigAttribute> ite = configAttributes.iterator();
+        SecurityConfig sc;
         while (ite.hasNext()) {
-            SecurityConfig ca = (SecurityConfig)ite.next();
-            if(authSet.contains(ca.getAttribute()))
+            sc = (SecurityConfig)ite.next();
+            if("permitAll".equals(sc.getAttribute()) || "ROLE_ANONYMOUS".equals(sc.getAttribute()))
+                return;
+            if(authSet.contains(sc.getAttribute()))
                 return;
         }
         throw new AccessDeniedException("not allow");

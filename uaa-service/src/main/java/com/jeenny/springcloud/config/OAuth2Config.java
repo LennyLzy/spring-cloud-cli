@@ -33,13 +33,15 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                     .scopes("feign")
                     .authorizedGrantTypes("Implicit","client_credentials")
                     .accessTokenValiditySeconds(60 * 15)
+                    .authorities("ROLE_CLIENT")
                 .and()
                     .withClient("app")
                     .secret(passwordEncoder.encode("123456"))
                     .scopes("app")
                     .authorizedGrantTypes("authorization_code","refresh_token","password")
                     .accessTokenValiditySeconds(3600)
-                    .refreshTokenValiditySeconds(3600 * 24 * 7);
+                    .refreshTokenValiditySeconds(3600 * 24 * 7)
+                    .authorities("ROLE_USER");
     }
 
     @Override
@@ -52,7 +54,8 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauth){
-        oauth.tokenKeyAccess("permitAll()")
+        oauth
+                .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()");
     }
 

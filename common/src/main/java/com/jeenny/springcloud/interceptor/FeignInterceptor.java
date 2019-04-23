@@ -42,6 +42,7 @@ public class FeignInterceptor implements RequestInterceptor {
                 JWT jwt = mapper.readValue(response.body().string(), JWT.class);
                 requestTemplate.header("Authorization",
                         String.format("%s %s",jwt.getToken_type(),jwt.getAccess_token()));
+                System.out.println(jwt);
             }catch (Exception e){
                 e.printStackTrace();
             }
