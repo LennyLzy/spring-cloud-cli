@@ -37,8 +37,12 @@ import java.util.List;
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+
     @Autowired
     TokenStore tokenStore;
+//    @Autowired
+//    MyFilterSecurityInterceptor myFilterSecurityInterceptor;
+
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -46,16 +50,25 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .csrf().disable()
 //                .cors().configurationSource(corsConfigurationSource())
 //        .and()
-                .authorizeRequests().anyRequest().hasAnyRole()
+                .authorizeRequests().anyRequest().authenticated()
                 .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
                     @Override
                     public <O extends FilterSecurityInterceptor> O postProcess(O o) {
-                        o.setAccessDecisionManager(accessDecisionManager());
-                        o.setSecurityMetadataSource(mySecurityMetadataSource());
+//                        o.setAccessDecisionManager(accessDecisionManager());
+//                        o.setAccessDecisionManager(accessDecisionManager());
+//                        System.out.println(o.getAccessDecisionManager() instanceof AffirmativeBased);
+                        System.out.println(o.getClass());
+                        System.out.println(o.getAccessDecisionManager().getClass());
+                        System.out.println(o.getSecurityMetadataSource().getClass());
+//                        ((AffirmativeBased)o.getAccessDecisionManager()).getDecisionVoters().forEach(i->{
+//                            System.out.println(i.getClass());
+//                        });
+//                        o.setSecurityMetadataSource(mySecurityMetadataSource());
                         return o;
                     }
                 })
         ;
+//        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class);
     }
 
     @Override

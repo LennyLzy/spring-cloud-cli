@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.security.oauth2.common.AuthenticationScheme;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -34,6 +35,7 @@ import static feign.FeignException.errorStatus;
 /**
  * Created by Administrator on 2019/4/22.
  */
+@Component
 public class OAuth2FeignConfig {
 
     // feign的OAuth2ClientContext
@@ -43,7 +45,7 @@ public class OAuth2FeignConfig {
     public ClientCredentialsResourceDetails clientCredentialsResourceDetails(){
         ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
         resource.setAccessTokenUri("http://localhost:18050/oauth/token");
-        resource.setClientId("client");
+        resource.setClientId("feign");
         resource.setClientSecret("123456");
         resource.setGrantType("Implicit");
         resource.setClientAuthenticationScheme(AuthenticationScheme.header);

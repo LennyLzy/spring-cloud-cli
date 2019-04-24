@@ -15,23 +15,25 @@ import java.io.IOException;
 /**
  * Created by Administrator on 2019/4/19.
  */
-@Component
+//@Component
 public class FeignInterceptor implements RequestInterceptor {
 
     private Logger logger = LoggerFactory.getLogger(FeignInterceptor.class);
 
+    private String CLIENT_ID = "feign";
+    private String CLIENT_SECRET = "123456";
+    private String TOKEN_URL = "http://localhost:18050/oauth/token";
+
     public void apply(RequestTemplate requestTemplate){
-//        requestTemplate.header("Authorization", "Basic dWFhLXNlcnZpY2U6MTIzNDU2");
-        //dXNlci1zZXJ2aWNlOjEyMzQ1Ng==
         if(!requestTemplate.headers().containsKey("Authorization")){
             OkHttpClient client = new OkHttpClient();
-            String credential = Credentials.basic("feign", "123456");
+            String credential = Credentials.basic(CLIENT_ID, CLIENT_SECRET);
             FormBody body = new FormBody.Builder()
                     .add("grant_type", "client_credentials")
                     .build();
             Request request = new Request.Builder()
                     .header("Authorization", credential)
-                    .url("http://localhost:18050/oauth/token")
+                    .url(TOKEN_URL)
                     .post(body)
                     .build();
             try (Response response = client.newCall(request).execute()) {
@@ -42,7 +44,6 @@ public class FeignInterceptor implements RequestInterceptor {
                 JWT jwt = mapper.readValue(response.body().string(), JWT.class);
                 requestTemplate.header("Authorization",
                         String.format("%s %s",jwt.getToken_type(),jwt.getAccess_token()));
-                System.out.println(jwt);
             }catch (Exception e){
                 e.printStackTrace();
             }

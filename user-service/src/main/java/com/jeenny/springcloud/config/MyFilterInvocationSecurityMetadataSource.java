@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Created by Administrator on 2019/4/17.
  */
-public class MyFilterInvocationSecurityMetadataSource implements org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource {
+public class MyFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private FilterInvocationSecurityMetadataSource superMetadataSource;
 
@@ -19,8 +19,12 @@ public class MyFilterInvocationSecurityMetadataSource implements org.springframe
 
     private static final Map<String,String> urlRoleMap = new LinkedHashMap <>();
 
+    private static String PERMITALL = "IS_AUTHENTICATED_ANONYMOUSLY";
+    private static String AUTHENTICATED = "IS_AUTHENTICATED_FULLY";
+    private static String REMENBERED = "IS_AUTHENTICATED_REMEMBERED";
+
     static {
-        urlRoleMap.put("/test","ROLE_ANONYMOUS");
+        urlRoleMap.put("/test","permitAll");
         urlRoleMap.put("/user/login","ROLE_ANONYMOUS");
         urlRoleMap.put("/user/register","ROLE_ANONYMOUS");
         urlRoleMap.put("/user/**","ROLE_CLIENT");
@@ -47,7 +51,7 @@ public class MyFilterInvocationSecurityMetadataSource implements org.springframe
                 return SecurityConfig.createList(entry.getValue().split(","));
             }
         }
-        return SecurityConfig.createList("ROLE_USER");
+        return SecurityConfig.createList("ROLE_USER","ROLE_CLIENT");
     }
 
     @Override
