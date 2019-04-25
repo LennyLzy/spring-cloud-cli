@@ -1,10 +1,14 @@
 package com.jeenny.springcloud.config;
 
 
+import com.jeenny.springcloud.dto.JWT;
+import com.jeenny.springcloud.interceptor.FeignInterceptor;
 import feign.*;
+import feign.Logger;
+import feign.codec.DecodeException;
 import feign.codec.Decoder;
 import feign.codec.ErrorDecoder;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -38,35 +42,17 @@ import static feign.FeignException.errorStatus;
 @Component
 public class OAuth2FeignConfig {
 
-    // feign的OAuth2ClientContext
-    private OAuth2ClientContext feignOAuth2ClientContext =  new DefaultOAuth2ClientContext();
-
-    @Bean
-    public ClientCredentialsResourceDetails clientCredentialsResourceDetails(){
-        ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
-        resource.setAccessTokenUri("http://localhost:18050/oauth/token");
-        resource.setClientId("feign");
-        resource.setClientSecret("123456");
-        resource.setGrantType("Implicit");
-        resource.setClientAuthenticationScheme(AuthenticationScheme.header);
-        return resource;
-    }
-
-    @Autowired
-    private ClientCredentialsResourceDetails clientCredentialsResourceDetails;
 
     @Autowired
     private ObjectFactory<HttpMessageConverters> messageConverters;
 
-    @Bean
-    public OAuth2RestTemplate clientCredentialsRestTemplate(){
-        return new OAuth2RestTemplate(clientCredentialsResourceDetails);
-    }
+    @Autowired
+    FeignInterceptor feignInterceptor;
 
-    @Bean
-    public RequestInterceptor oauth2FeignRequestInterceptor(){
-        return new OAuth2FeignRequestInterceptor(feignOAuth2ClientContext, clientCredentialsResourceDetails);
-    }
+//    @Bean
+//    public RequestInterceptor oauth2FeignRequestInterceptor(){
+//        return new FeignInterceptor(FEIGN_TOKEN);
+//    }
 
     @Bean
     public Logger.Level feignLoggerLevel() {
@@ -82,115 +68,138 @@ public class OAuth2FeignConfig {
 
     @Bean
     public Decoder feignDecoder() {
-        return new CustomResponseEntityDecoder(new SpringDecoder(this.messageConverters), feignOAuth2ClientContext);
+        return new CustomResponseEntityDecoder(new SpringDecoder(this.messageConverters),feignInterceptor);
     }
 
-    @Bean
-    public ErrorDecoder errorDecoder() {
-        return new RestClientErrorDecoder(feignOAuth2ClientContext);
-    }
-    /**
-     *  Http响应成功 但是token失效，需要定制 ResponseEntityDecoder
-     * @author maxianming
-     * @date 2018/10/30 9:47
-     */
     class CustomResponseEntityDecoder implements Decoder {
-        private org.slf4j.Logger log = LoggerFactory.getLogger(CustomResponseEntityDecoder.class);
+
+        private org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
         private Decoder decoder;
+        private FeignInterceptor feignInterceptor;
 
-        private OAuth2ClientContext context;
-
-        public CustomResponseEntityDecoder(Decoder decoder, OAuth2ClientContext context) {
+        public CustomResponseEntityDecoder(Decoder decoder,FeignInterceptor feignInterceptor){
             this.decoder = decoder;
-            this.context = context;
+            this.feignInterceptor = feignInterceptor;
         }
 
         @Override
-        public Object decode(final Response response, Type type) throws IOException, FeignException {
-            if (log.isDebugEnabled()) {
-                log.debug("feign decode type:{}，reponse:{}", type, response.body());
-            }
-            if (isParameterizeHttpEntity(type)) {
-                type = ((ParameterizedType) type).getActualTypeArguments()[0];
-                Object decodedObject = decoder.decode(response, type);
-                return createResponse(decodedObject, response);
-            }
-            else if (isHttpEntity(type)) {
-                return createResponse(null, response);
-            }
-            else {
-                // custom ResponseEntityDecoder if token is valid then go to errorDecoder
-                String body = Util.toString(response.body().asReader());
-                if (body.contains(HttpStatus.UNAUTHORIZED.name())) {
-                    clearTokenAndRetry(response, body);
-                }
-                return decoder.decode(response, type);
-            }
-        }
-
-        /**
-         * token失效 则将token设置为null 然后重试
-         * @author maxianming
-         * @param
-         * @return
-         * @date 2018/10/30 10:05
-         */
-        private void clearTokenAndRetry(Response response, String body) throws FeignException {
-            log.error("接收到Feign请求资源响应,响应内容:{}",body);
-            context.setAccessToken(null);
-            throw new RetryableException("access_token过期，即将进行重试", Request.HttpMethod.POST, new Date());
-        }
-
-        private boolean isParameterizeHttpEntity(Type type) {
-            if (type instanceof ParameterizedType) {
-                return isHttpEntity(((ParameterizedType) type).getRawType());
-            }
-            return false;
-        }
-
-        private boolean isHttpEntity(Type type) {
-            if (type instanceof Class) {
-                Class c = (Class) type;
-                return HttpEntity.class.isAssignableFrom(c);
-            }
-            return false;
-        }
-
-        @SuppressWarnings("unchecked")
-        private <T> ResponseEntity<T> createResponse(Object instance, Response response) {
-
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            for (String key : response.headers().keySet()) {
-                headers.put(key, new LinkedList<>(response.headers().get(key)));
-            }
-            return new ResponseEntity<>((T) instance, headers, org.springframework.http.HttpStatus.valueOf(response
-                    .status()));
+        public Object decode(Response response, Type type) throws IOException, DecodeException, FeignException {
+//            feignInterceptor.clearJWT();
+//            if(response.status() == HttpStatus.UNAUTHORIZED.value()){
+//                feignInterceptor.clearJWT();
+//                throw new RetryableException("access_token过期，即将进行重试", Request.HttpMethod.POST, new Date());
+//            }
+            return decoder.decode(response, type);
         }
     }
 
-    /**
-     *  Feign调用HTTP返回响应码错误时候，定制错误的解码
-     * @author maxianming
-     * @date 2018/10/30 9:45
-     */
-    class RestClientErrorDecoder implements ErrorDecoder {
-        private org.slf4j.Logger logger = LoggerFactory.getLogger(RestClientErrorDecoder.class);
-
-        private OAuth2ClientContext context;
-
-        RestClientErrorDecoder(OAuth2ClientContext context) {
-            this.context = context;
-        }
-
-        public Exception decode(String methodKey, Response response) {
-            logger.error("Feign调用异常，异常methodKey:{}, token:{}, response:{}", methodKey, context.getAccessToken(), response.body());
-            if (HttpStatus.UNAUTHORIZED.value() == response.status()) {
-                logger.error("接收到Feign请求资源响应401，access_token已经过期，重置access_token为null待重新获取。");
-                context.setAccessToken(null);
-                return new RetryableException("疑似access_token过期，即将进行重试",Request.HttpMethod.POST, new Date());
-            }
-            return errorStatus(methodKey, response);
-        }
-    }
+//    @Bean
+//    public ErrorDecoder errorDecoder() {
+//        return new RestClientErrorDecoder(FEIGN_TOKEN);
+//    }
+//    /**
+//     *  Http响应成功 但是token失效，需要定制 ResponseEntityDecoder
+//     * @author maxianming
+//     * @date 2018/10/30 9:47
+//     */
+//    class CustomResponseEntityDecoder implements Decoder {
+//        private org.slf4j.Logger log = LoggerFactory.getLogger(CustomResponseEntityDecoder.class);
+//
+//        private Decoder decoder;
+//        private JWT jwt;
+//
+//        public CustomResponseEntityDecoder(Decoder decoder,JWT jwt) {
+//            this.decoder = decoder;
+//            this.jwt = jwt;
+//        }
+//
+//        @Override
+//        public Object decode(final Response response, Type type) throws IOException, FeignException {
+//            if (log.isDebugEnabled()) {
+//                log.debug("feign decode type:{}，reponse:{}", type, response.body());
+//            }
+//            if (isParameterizeHttpEntity(type)) {
+//                type = ((ParameterizedType) type).getActualTypeArguments()[0];
+//                Object decodedObject = decoder.decode(response, type);
+//                return createResponse(decodedObject, response);
+//            }
+//            else if (isHttpEntity(type)) {
+//                return createResponse(null, response);
+//            }
+//            else {
+//                // custom ResponseEntityDecoder if token is valid then go to errorDecoder
+//                String body = Util.toString(response.body().asReader());
+//                if (body.contains(HttpStatus.UNAUTHORIZED.name())) {
+//                    clearTokenAndRetry(response, body);
+//                }
+//                return decoder.decode(response, type);
+//            }
+//        }
+//
+//        /**
+//         * token失效 则将token设置为null 然后重试
+//         * @author maxianming
+//         * @param
+//         * @return
+//         * @date 2018/10/30 10:05
+//         */
+//        private void clearTokenAndRetry(Response response, String body) throws FeignException {
+//            log.error("接收到Feign请求资源响应,响应内容:{}",body);
+//            jwt = null;
+//            throw new RetryableException("access_token过期，即将进行重试", Request.HttpMethod.POST, new Date());
+//        }
+//
+//        private boolean isParameterizeHttpEntity(Type type) {
+//            if (type instanceof ParameterizedType) {
+//                return isHttpEntity(((ParameterizedType) type).getRawType());
+//            }
+//            return false;
+//        }
+//
+//        private boolean isHttpEntity(Type type) {
+//            if (type instanceof Class) {
+//                Class c = (Class) type;
+//                return HttpEntity.class.isAssignableFrom(c);
+//            }
+//            return false;
+//        }
+//
+//        @SuppressWarnings("unchecked")
+//        private <T> ResponseEntity<T> createResponse(Object instance, Response response) {
+//
+//            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+//            for (String key : response.headers().keySet()) {
+//                headers.put(key, new LinkedList<>(response.headers().get(key)));
+//            }
+//            return new ResponseEntity<>((T) instance, headers, org.springframework.http.HttpStatus.valueOf(response
+//                    .status()));
+//        }
+//    }
+//
+//    /**
+//     *  Feign调用HTTP返回响应码错误时候，定制错误的解码
+//     * @author maxianming
+//     * @date 2018/10/30 9:45
+//     */
+//    class RestClientErrorDecoder implements ErrorDecoder {
+//        private org.slf4j.Logger logger = LoggerFactory.getLogger(RestClientErrorDecoder.class);
+//
+////        private OAuth2ClientContext context;
+//        private JWT jwt;
+//        RestClientErrorDecoder(JWT jwt) {
+//            this.jwt = jwt;
+//        }
+//
+//        public Exception decode(String methodKey, Response response) {
+////            logger.error("Feign调用异常，异常methodKey:{}, token:{}, response:{}", methodKey, context.getAccessToken(), response.body());
+//            if (HttpStatus.UNAUTHORIZED.value() == response.status()) {
+//                logger.error("接收到Feign请求资源响应401，access_token已经过期，重置access_token为null待重新获取。");
+////                context.setAccessToken(null);
+//                jwt = null;
+//                return new RetryableException("疑似access_token过期，即将进行重试",Request.HttpMethod.POST, new Date());
+//            }
+//            return errorStatus(methodKey, response);
+//        }
+//    }
 }

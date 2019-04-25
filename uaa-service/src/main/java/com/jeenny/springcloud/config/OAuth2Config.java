@@ -30,9 +30,9 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
         clients.inMemory()
                     .withClient("feign")
                     .secret(passwordEncoder.encode("123456"))
-                    .scopes("feign")
+                    .scopes("client")
                     .authorizedGrantTypes("Implicit","client_credentials")
-                    .accessTokenValiditySeconds(60 * 15)
+                    .accessTokenValiditySeconds(10)
                     .authorities("ROLE_CLIENT")
                 .and()
                     .withClient("app")
@@ -41,7 +41,16 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                     .authorizedGrantTypes("authorization_code","refresh_token","password")
                     .accessTokenValiditySeconds(3600)
                     .refreshTokenValiditySeconds(3600 * 24 * 7)
-                    .authorities("ROLE_USER");
+                    .authorities("ROLE_APP")
+                .and()
+                    .withClient("user")
+                    .secret(passwordEncoder.encode("123456"))
+                    .scopes("user")
+                    .authorizedGrantTypes("authorization_code","refresh_token","password")
+                    .accessTokenValiditySeconds(3600)
+                    .refreshTokenValiditySeconds(3600 * 24 * 7)
+                    .authorities("ROLE_USER")
+        ;
     }
 
     @Override

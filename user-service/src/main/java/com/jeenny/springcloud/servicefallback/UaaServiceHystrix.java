@@ -13,4 +13,9 @@ public class UaaServiceHystrix implements UaaServiceClient {
     public JWT getToken(String aauthorization, String type, String username, String password) {
         return null;
     }
+
+    @Override
+    public String testFeign() {
+        return null;
+    }
 }

@@ -8,6 +8,8 @@ import com.jeenny.springcloud.model.entity.User;
 import com.jeenny.springcloud.service.UserService;
 import com.jeenny.springcloud.serviceimpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,6 +61,7 @@ public class UserController {
     }
 
     @PostMapping("/info/{id}")
+    @ResponseBody
     public Result getUserById(@PathVariable("id")String id){
         return ResultUtil.success(userService.getById(Long.valueOf(id)));
     }

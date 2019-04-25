@@ -11,6 +11,7 @@ import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.access.vote.AuthenticatedVoter;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.access.vote.UnanimousBased;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,20 +51,20 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .csrf().disable()
 //                .cors().configurationSource(corsConfigurationSource())
 //        .and()
-                .authorizeRequests().anyRequest().authenticated()
+                .authorizeRequests()
+                .anyRequest().authenticated()
                 .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
                     @Override
                     public <O extends FilterSecurityInterceptor> O postProcess(O o) {
-//                        o.setAccessDecisionManager(accessDecisionManager());
-//                        o.setAccessDecisionManager(accessDecisionManager());
-//                        System.out.println(o.getAccessDecisionManager() instanceof AffirmativeBased);
-                        System.out.println(o.getClass());
-                        System.out.println(o.getAccessDecisionManager().getClass());
-                        System.out.println(o.getSecurityMetadataSource().getClass());
-//                        ((AffirmativeBased)o.getAccessDecisionManager()).getDecisionVoters().forEach(i->{
+
+//                        System.out.println(o.getClass());
+//                        System.out.println(o.getAccessDecisionManager().getClass());
+//                        System.out.println(o.getSecurityMetadataSource().getClass());
+//                        ((AffirmativeBased) o.getAccessDecisionManager()).getDecisionVoters().forEach(i -> {
 //                            System.out.println(i.getClass());
 //                        });
-//                        o.setSecurityMetadataSource(mySecurityMetadataSource());
+                        o.setAccessDecisionManager(accessDecisionManager());
+                        o.setSecurityMetadataSource(mySecurityMetadataSource(o.getSecurityMetadataSource()));
                         return o;
                     }
                 })
@@ -76,24 +77,26 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         resources.tokenStore(tokenStore);
     }
 
-    @Bean
-    public MyFilterInvocationSecurityMetadataSource mySecurityMetadataSource() {
-        MyFilterInvocationSecurityMetadataSource securityMetadataSource = new MyFilterInvocationSecurityMetadataSource();
+//    @Bean
+    public AppFilterInvocationSecurityMetadataSource mySecurityMetadataSource(FilterInvocationSecurityMetadataSource filterInvocationSecurityMetadataSource) {
+        AppFilterInvocationSecurityMetadataSource securityMetadataSource = new AppFilterInvocationSecurityMetadataSource(filterInvocationSecurityMetadataSource);
         return securityMetadataSource;
     }
 
 //    @Bean
-//    public AccessDecisionManager myAccessDecisionManager() {
-//        return new MyAccessDecisionManager();
+//    public MyFilterInvocationSecurityMetadataSource mySecurityMetadataSource() {
+//        MyFilterInvocationSecurityMetadataSource securityMetadataSource = new MyFilterInvocationSecurityMetadataSource();
+//        return securityMetadataSource;
 //    }
+
     @Bean
     public AccessDecisionManager accessDecisionManager() {
         List<AccessDecisionVoter<? extends Object>> decisionVoters
                 = Arrays.asList(
                 new WebExpressionVoter(),
-                 new RoleVoter(),
-//                new DynamicVoter(),
-                new AuthenticatedVoter());
+                new RoleVoter()
+//                new AuthenticatedVoter()
+        );
 //        return new UnanimousBased(decisionVoters);
         return new AffirmativeBased(decisionVoters);
     }

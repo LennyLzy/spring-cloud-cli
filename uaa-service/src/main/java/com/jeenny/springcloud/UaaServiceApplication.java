@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
@@ -24,5 +25,10 @@ public class UaaServiceApplication {
 	@GetMapping("/test")
 	public String test(){
 		return "test";
+	}
+
+	@GetMapping("/testfeign")
+	public String testFeign(){
+		return "testFeign";
 	}
 }
