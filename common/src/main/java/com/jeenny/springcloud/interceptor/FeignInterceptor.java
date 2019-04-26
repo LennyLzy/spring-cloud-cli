@@ -38,7 +38,7 @@ public class FeignInterceptor implements RequestInterceptor {
         if(!requestTemplate.headers().containsKey("Authorization")){
             if(this.jwt == null)
                 getToken();
-            System.out.println(jwt);
+//            System.out.println(jwt);
             requestTemplate.header("Authorization",
                     String.format("%s %s",jwt.getToken_type(),jwt.getAccess_token()));
         }

@@ -16,5 +16,5 @@ import org.springframework.web.bind.annotation.*;
 public interface UserServiceClient {
     @PostMapping("/user/load")
     @ResponseBody
-    Result loadUserByUsername(@RequestParam("username")String username);
+    Result<User> loadUserByUsername(@RequestParam("username")String username);
 }

@@ -37,15 +37,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(
                         "/oauth/authorize","/oauth/confirm_access")
                 .permitAll()
-                .and()
-                .formLogin().permitAll()
-                .and()
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/").permitAll()
+//                .and()
+//                .formLogin().permitAll()
+//                .and()
+//                .logout().logoutUrl("/logout").logoutSuccessUrl("/").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/**").authenticated()
-                .and()
-                .httpBasic();
+        ;
     }
 
     @Autowired

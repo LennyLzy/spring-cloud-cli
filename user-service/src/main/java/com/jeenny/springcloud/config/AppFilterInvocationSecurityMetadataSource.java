@@ -33,9 +33,9 @@ public class AppFilterInvocationSecurityMetadataSource implements org.springfram
 //        put("/health", "ROLE_ANONYMOUS");
 //        put("/restart", "ROLE_ADMIN");
 //        put("/demo", "ROLE_USER");
-        put("/testfeign","ROLE_ANONYMOUS");
+        put("/user/login","ROLE_ANONYMOUS");
         put("/foo","ROLE_ANONYMOUS");
-        put("/user/**","ROLE_USER");
+        put("/user/**","ROLE_CLIENT");
     }};
 
     @Override

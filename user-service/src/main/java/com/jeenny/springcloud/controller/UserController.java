@@ -68,7 +68,7 @@ public class UserController {
 
     @PostMapping("/load")
     @ResponseBody
-    public Result loadUserByUsername(@RequestParam("username")String username){
+    public Result<User> loadUserByUsername(@RequestParam("username")String username){
         return ResultUtil.success(userService.loadUserByUsername(username));
     }
 }

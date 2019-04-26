@@ -33,6 +33,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 
 import static feign.FeignException.errorStatus;
 
@@ -63,7 +64,7 @@ public class OAuth2FeignConfig {
     public Retryer retry() {
         // default Retryer will retry 5 times waiting waiting
         // 100 ms per retry with a 1.5* back off multiplier
-        return new Retryer.Default();
+        return new Retryer.Default(100, TimeUnit.SECONDS.toMillis(500L), 3);
     }
 
     @Bean
@@ -85,19 +86,20 @@ public class OAuth2FeignConfig {
 
         @Override
         public Object decode(Response response, Type type) throws IOException, DecodeException, FeignException {
-//            feignInterceptor.clearJWT();
-//            if(response.status() == HttpStatus.UNAUTHORIZED.value()){
-//                feignInterceptor.clearJWT();
-//                throw new RetryableException("access_token过期，即将进行重试", Request.HttpMethod.POST, new Date());
-//            }
+            logger.info("feign decode type:{}，status:{}, response:{}", type, response.status(),response.body());
+            if(response.status() == 401){
+                feignInterceptor.clearJWT();
+                throw new RetryableException("access_token过期，请求重试", Request.HttpMethod.POST, new Date());
+            }
             return decoder.decode(response, type);
         }
     }
 
-//    @Bean
-//    public ErrorDecoder errorDecoder() {
-//        return new RestClientErrorDecoder(FEIGN_TOKEN);
-//    }
+    @Bean
+    public ErrorDecoder errorDecoder() {
+        return new FeignClientErrorDecoder(feignInterceptor);
+    }
+
 //    /**
 //     *  Http响应成功 但是token失效，需要定制 ResponseEntityDecoder
 //     * @author maxianming
@@ -177,29 +179,27 @@ public class OAuth2FeignConfig {
 //        }
 //    }
 //
-//    /**
-//     *  Feign调用HTTP返回响应码错误时候，定制错误的解码
-//     * @author maxianming
-//     * @date 2018/10/30 9:45
-//     */
-//    class RestClientErrorDecoder implements ErrorDecoder {
-//        private org.slf4j.Logger logger = LoggerFactory.getLogger(RestClientErrorDecoder.class);
-//
-////        private OAuth2ClientContext context;
-//        private JWT jwt;
-//        RestClientErrorDecoder(JWT jwt) {
-//            this.jwt = jwt;
-//        }
-//
-//        public Exception decode(String methodKey, Response response) {
-////            logger.error("Feign调用异常，异常methodKey:{}, token:{}, response:{}", methodKey, context.getAccessToken(), response.body());
-//            if (HttpStatus.UNAUTHORIZED.value() == response.status()) {
-//                logger.error("接收到Feign请求资源响应401，access_token已经过期，重置access_token为null待重新获取。");
-////                context.setAccessToken(null);
-//                jwt = null;
-//                return new RetryableException("疑似access_token过期，即将进行重试",Request.HttpMethod.POST, new Date());
-//            }
-//            return errorStatus(methodKey, response);
-//        }
-//    }
+    /**
+     *  Feign调用HTTP返回响应码错误时候，定制错误的解码
+     * @author maxianming
+     * @date 2018/10/30 9:45
+     */
+    class FeignClientErrorDecoder implements ErrorDecoder {
+        private org.slf4j.Logger logger = LoggerFactory.getLogger(FeignClientErrorDecoder.class);
+        private FeignInterceptor feignInterceptor;
+
+        FeignClientErrorDecoder(FeignInterceptor feignInterceptor) {
+            this.feignInterceptor = feignInterceptor;
+        }
+
+        public Exception decode(String methodKey, Response response) {
+            logger.error("Feign调用异常，异常methodKey:{}, response:{}", methodKey, response.body());
+            if (HttpStatus.UNAUTHORIZED.value() == response.status()) {
+                logger.error("接收到Feign请求资源响应401，access_token已经过期，重置access_token为null待重新获取。");
+                feignInterceptor.clearJWT();
+                return new RetryableException("疑似access_token过期，请求重试",Request.HttpMethod.POST, new Date());
+            }
+            return errorStatus(methodKey, response);
+        }
+    }
 }

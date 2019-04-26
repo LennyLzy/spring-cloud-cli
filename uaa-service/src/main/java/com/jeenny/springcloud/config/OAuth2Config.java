@@ -32,7 +32,7 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                     .secret(passwordEncoder.encode("123456"))
                     .scopes("client")
                     .authorizedGrantTypes("Implicit","client_credentials")
-                    .accessTokenValiditySeconds(10)
+                    .accessTokenValiditySeconds(15)
                     .authorities("ROLE_CLIENT")
                 .and()
                     .withClient("app")

@@ -24,11 +24,12 @@ public class UserDetailsServiceImpl implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 //            String encodedKey = Base64Utils.encodeToString(USER_SERVICE_KEY.getBytes());
-            Result result = userServiceClient.loadUserByUsername(s);
-            LinkedHashMap<String,Object> map = (LinkedHashMap<String,Object>)result.getContent();
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.putAll(map);
-            User user = jsonObject.toJavaObject(User.class);
+            Result<User> result = userServiceClient.loadUserByUsername(s);
+            User user = (User)result.getContent();
+//            LinkedHashMap<String,Object> map = (LinkedHashMap<String,Object>)result.getContent();
+//            JSONObject jsonObject = new JSONObject();
+//            jsonObject.putAll(map);
+//            User user = jsonObject.toJavaObject(User.class);
             return user;
     }
 }
