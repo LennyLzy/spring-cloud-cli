@@ -3,6 +3,8 @@ package com.jeenny.springcloud.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jeenny.springcloud.model.entity.Permission;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -13,4 +15,5 @@ import com.jeenny.springcloud.model.entity.Permission;
  */
 public interface PermissionMapper extends BaseMapper<Permission> {
 
+    List<Permission> selectURLPermissionRole();
 }

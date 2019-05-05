@@ -6,6 +6,7 @@
     <file url="file://$PROJECT_DIR$/config-service" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eureka-server" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gateway-server" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/log-service" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/uaa-service" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/user-service" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/zipkin-server" charset="UTF-8" />

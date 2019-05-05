@@ -28,6 +28,7 @@
 		<module>uaa-service</module>
 		<module>user-service</module>
         <module>common</module>
+		<module>log-service</module>
     </modules>
 
 	<dependencies>

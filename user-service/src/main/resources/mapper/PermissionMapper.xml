@@ -9,11 +9,28 @@
         <result column="type" property="type" />
         <result column="url" property="url" />
         <result column="description" property="description" />
+        <result column="client_id" property="clientId" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, permission, type, url, description
+        id, permission, type, url, description, client_id
     </sql>
 
+    <resultMap id="PermissionRoleResultMap" type="com.jeenny.springcloud.model.entity.Permission">
+        <result column="pid" property="id" />
+        <result column="url" property="url" />
+        <collection property="roles" column="id" ofType="com.jeenny.springcloud.model.entity.Role" javaType="ArrayList">
+            <result column="rid" property="id"></result>
+            <result column="role_name" property="roleName"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectURLPermissionRole" resultMap="PermissionRoleResultMap">
+        SELECT
+          p.id AS pid, p.url, r.id AS rid, r.role_name
+        FROM
+          permission p
+        LEFT JOIN role_permission rp ON rp.pid = p.id
+    </select>
 </mapper>
