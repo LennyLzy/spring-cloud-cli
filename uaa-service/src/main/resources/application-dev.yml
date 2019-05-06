@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: devDB, devRedis
+    include: devDB, devRedis, devZipkin
 mybatis-plus:
 #  type-aliases-package: com.example.homework.pojo
 #  config-location: classpath:/mybatis-config.xml

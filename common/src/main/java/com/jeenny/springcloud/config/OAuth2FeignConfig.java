@@ -52,7 +52,7 @@ public class OAuth2FeignConfig {
 
 //    @Bean
 //    public RequestInterceptor oauth2FeignRequestInterceptor(){
-//        return new FeignInterceptor(FEIGN_TOKEN);
+//        return feignInterceptor;
 //    }
 
     @Bean
@@ -195,7 +195,7 @@ public class OAuth2FeignConfig {
         public Exception decode(String methodKey, Response response) {
             logger.error("Feign调用异常，异常methodKey:{}, response:{}", methodKey, response.body());
             if (HttpStatus.UNAUTHORIZED.value() == response.status()) {
-                logger.error("接收到Feign请求资源响应401，access_token已经过期，重置access_token为null待重新获取。");
+//                logger.error("接收到Feign请求资源响应401，access_token已经过期，重置access_token为null待重新获取。");
                 feignInterceptor.clearJWT();
                 return new RetryableException("疑似access_token过期，请求重试",Request.HttpMethod.POST, new Date());
             }

@@ -70,7 +70,6 @@ public class RedissonAutoConfiguration {
     @Bean
     DistributedLocker distributedLocker(RedissonClient redissonClient) {
         DistributedLocker locker = new RedissonDistributedLocker(redissonClient);
-        RedisLockUtil.setLocker(locker);
         return locker;
     }
 

@@ -20,6 +20,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.io.Serializable;
+import java.lang.reflect.Parameter;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +40,9 @@ public class RedisConfig extends CachingConfigurerSupport {
 //            sb.append(target.getClass().getName());
             sb.append(target.getClass().getSimpleName()+"?");
 //            sb.append("$" + method.getName());
-            for (Object obj : params) {
-                sb.append(obj.toString()+"&");
+            Parameter[] parameters = method.getParameters();
+            for(int i = 0; i < parameters.length; i++){
+                sb.append(parameters[i].getName() + "=" + params[i] + "&");
             }
             return sb.toString();
         };

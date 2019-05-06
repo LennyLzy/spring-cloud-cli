@@ -12,6 +12,7 @@ import com.jeenny.springcloud.service.UserService;
 import com.jeenny.springcloud.dto.JWT;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
