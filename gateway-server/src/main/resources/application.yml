@@ -1,11 +1,41 @@
+foo: foo
 ##设置断路由的超时时间，毫秒
-#hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds: 3000
+hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds: 3000
 ## 配置gateway路由
-#spring:
-#  cloud:
-#    gateway:
-#      default-filters:
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+                # 是否可以通过其他服务的serviceId来转发到具体的服务实例。默认为false
+                # 为true,自动创建路由,路由访问方式：http://Gateway_HOST:Gateway_PORT/大写的serviceId/**，其中微服务应用名默认大写访问
+          enabled: true
+          lowerCaseServiceId: true
+      default-filters:
 #      - name: Hystrix
 #        args:
-#          name: fallbackcmd
+#          name: globalfallbackcmd
 #          fallbackUri: forward:/fallback
+      - name: RequestRateLimiter
+        args:
+          # 使用SpEL名称引用Bean，与上面新建的RateLimiterConfig类中的bean的name相同
+          key-resolver: '#{@remoteAddrKeyResolver}'
+          # 每秒最大访问次数
+          redis-rate-limiter.replenishRate: 1
+          # 令牌桶最大容量
+          redis-rate-limiter.burstCapacity: 3
+      - name: Hystrix
+        args:
+          name: fallbackcmd
+          fallbackUri: forward:/timeoutfallback
+
+#filters:
+## redis限流 ， filter名称必须是RequestRateLimiter
+#- name: RequestRateLimiter
+#  args:
+#    # 使用SpEL名称引用Bean，与上面新建的RateLimiterConfig类中的bean的name相同
+#    key-resolver: '#{@remoteAddrKeyResolver}'
+#    # 每秒最大访问次数
+#    redis-rate-limiter.replenishRate: 1
+#    # 令牌桶最大容量
+#    redis-rate-limiter.burstCapacity: 3

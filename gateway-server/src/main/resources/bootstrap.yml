@@ -1,8 +1,12 @@
 #设置断路由的超时时间，毫秒
-hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds: 3000
+#hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds: 3000
 spring:
   application:
     name: gateway-server
+  redis:
+    host: localhost
+    password:
+    database: 0
 #  rabbitmq:
 #    host: localhost
 #    port: 5672
@@ -12,18 +16,24 @@ spring:
 #      user:
 #        name: admin
 #        password: admin
-  cloud:
-    gateway:
-      default-filters:
-        - name: Hystrix
-          args:
-            name: fallbackcmd
-            fallbackUri: forward:/fallback
-    config:
-      fail-fast: true
-      discovery:
-        service-id: config-service
-        enabled: true
+#  cloud:
+##    gateway:
+##      default-filters:
+##        - name: Hystrix
+##          args:
+##            name: fallbackcmd
+##            fallbackUri: forward:/fallback
+##        - name: RequestRateLimiter
+##          args:
+##            redis-rate-limiter.replenishRate: 1  # 令牌桶的容积
+##            redis-rate-limiter.burstCapacity: 3  # 流速 每秒
+##            key-resolver: "#{@remoteAddrKeyResolver}" #SPEL表达式去的对应的bean
+##        - StripPrefix=1
+#    config:
+#      fail-fast: true
+#      discovery:
+#        service-id: config-service
+#        enabled: true
   profiles:
     active: dev
 eureka:
